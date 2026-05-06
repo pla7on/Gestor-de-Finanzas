@@ -199,6 +199,27 @@ label{font-size:13px;color:var(--text2);display:block;margin-bottom:4px;}
 @media(max-width:460px){
   .fijos-grid{grid-template-columns:1fr !important; gap:6px !important;}
 }
+/* Fijos table */
+.fijos-header{display:grid;grid-template-columns:1fr 120px 120px 32px;gap:6px;padding:6px 0 8px;border-bottom:2px solid var(--border);margin-bottom:2px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;font-weight:500;color:var(--text2);}
+.fijos-header span{text-align:center;}
+.fijos-header span:first-child{text-align:left;}
+.fijo-row{display:grid;grid-template-columns:1fr 120px 120px 32px;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);}
+.fijo-row:last-child{border-bottom:none;}
+.fijo-totals-row{border-top:2px solid var(--border);border-bottom:none;padding-top:10px;margin-top:2px;}
+.fijo-name{font-size:14px;font-weight:500;display:flex;align-items:center;min-width:0;overflow:hidden;}
+.fijo-name i{flex-shrink:0;}
+.fijo-input-est,.fijo-input-real{width:100%;text-align:center;}
+@media(max-width:560px){
+  .fijos-header{grid-template-columns:1fr 90px 90px 28px;gap:4px;}
+  .fijo-row{grid-template-columns:1fr 90px 90px 28px;gap:4px;}
+  .fijo-name{font-size:13px;}
+}
+@media(max-width:420px){
+  .fijos-header{grid-template-columns:1fr 80px 80px 26px;font-size:10px;}
+  .fijo-row{grid-template-columns:1fr 80px 80px 26px;}
+  .fijo-name{font-size:12px;}
+  .fijo-input-est,.fijo-input-real{padding:6px 4px;font-size:13px;}
+}
 </style>
 </head>
 <body>
@@ -537,42 +558,68 @@ function renderChartBalance(data){
 }
  
 // ---- SERVICIOS FIJOS ----
+// Uses event delegation on #lista-fijos to avoid inline handlers with string IDs
+// which break on iOS due to quoting issues
 function renderFijos(data){
   const total=data.serviciosFijos.reduce((s,f)=>s+(f.monto||0),0);
   const totalEst=data.serviciosFijos.reduce((s,f)=>s+(f.estimado||0),0);
   let html='';
-  // Header row
-  html+=`<div style="display:grid;grid-template-columns:1fr 140px 140px 32px;gap:8px;padding:6px 0 8px;border-bottom:2px solid var(--border);margin-bottom:4px;">
-    <div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;font-weight:500;">Servicio</div>
-    <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.04em;font-weight:500;text-align:center;">Estimado</div>
-    <div style="font-size:11px;color:var(--danger);text-transform:uppercase;letter-spacing:.04em;font-weight:500;text-align:center;">Real</div>
-    <div></div>
+  // Column headers
+  html+=`<div class="fijos-header">
+    <span>Servicio</span>
+    <span style="color:var(--gold);">Estimado</span>
+    <span style="color:var(--danger);">Real</span>
+    <span></span>
   </div>`;
   data.serviciosFijos.forEach(f=>{
-    html+=`<div style="display:grid;grid-template-columns:1fr 140px 140px 32px;gap:8px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);">
-      <div class="li-name"><i class="ti ${f.icono||'ti-device-tv'}" aria-hidden="true" style="margin-right:6px;color:${f.color||'var(--text2)'}"></i>${f.nombre}</div>
-      <input type="number" placeholder="Estimado" value="${f.estimado||''}" style="width:100%;border-color:var(--gold);" onchange="updateFijoEst('${f.id}',this.value)" onblur="updateFijoEst('${f.id}',this.value)">
-      <input type="number" placeholder="Real" value="${f.monto||''}" onchange="updateFijo('${f.id}',this.value)" onblur="updateFijo('${f.id}',this.value)">
-      <button class="icon-btn d" onclick="deleteFijo('${f.id}')" aria-label="Eliminar ${f.nombre}"><i class="ti ti-trash"></i></button>
+    html+=`<div class="fijo-row">
+      <div class="fijo-name"><i class="ti ${f.icono||'ti-device-tv'}" aria-hidden="true" style="margin-right:6px;color:${f.color||'var(--text2)'}"></i>${f.nombre}</div>
+      <input class="fijo-input-est" type="number" inputmode="numeric" placeholder="0" value="${f.estimado||''}" data-id="${f.id}" style="border-color:var(--gold);">
+      <input class="fijo-input-real" type="number" inputmode="numeric" placeholder="0" value="${f.monto||''}" data-id="${f.id}">
+      <button class="icon-btn d fijo-del" data-id="${f.id}" aria-label="Eliminar ${f.nombre}"><i class="ti ti-trash"></i></button>
     </div>`;
   });
-  html+=`<div style="display:grid;grid-template-columns:1fr 140px 140px 32px;gap:8px;align-items:center;padding:10px 0 4px;border-top:2px solid var(--border);margin-top:4px;">
-    <div class="li-name" style="font-weight:500;">Total fijos</div>
-    <div style="text-align:center;font-family:'DM Serif Display',serif;font-size:16px;color:var(--gold);">${fmt(totalEst)}</div>
-    <div style="text-align:center;font-family:'DM Serif Display',serif;font-size:16px;color:var(--danger);">${fmt(total)}</div>
+  html+=`<div class="fijo-row fijo-totals-row">
+    <div class="fijo-name" style="font-weight:500;">Total</div>
+    <div id="fijo-total-est" style="text-align:center;font-family:'DM Serif Display',serif;font-size:16px;color:var(--gold);">${fmt(totalEst)}</div>
+    <div id="fijo-total-real" style="text-align:center;font-family:'DM Serif Display',serif;font-size:16px;color:var(--danger);">${fmt(total)}</div>
     <div></div>
   </div>`;
-  document.getElementById('lista-fijos').innerHTML=html||'<div class="empty"><i class="ti ti-receipt-off" aria-hidden="true"></i><p>Sin servicios fijos</p></div>';
+  const container=document.getElementById('lista-fijos');
+  container.innerHTML=html;
+  // Attach events via delegation — avoids all inline handler quoting bugs on iOS
+  container.querySelectorAll('.fijo-input-est').forEach(inp=>{
+    inp.addEventListener('change',()=>saveFijoField(inp.dataset.id,'est',inp.value));
+    inp.addEventListener('blur',()=>saveFijoField(inp.dataset.id,'est',inp.value));
+  });
+  container.querySelectorAll('.fijo-input-real').forEach(inp=>{
+    inp.addEventListener('change',()=>saveFijoField(inp.dataset.id,'real',inp.value));
+    inp.addEventListener('blur',()=>saveFijoField(inp.dataset.id,'real',inp.value));
+  });
+  container.querySelectorAll('.fijo-del').forEach(btn=>{
+    btn.addEventListener('click',()=>deleteFijo(btn.dataset.id));
+  });
 }
-function updateFijo(id,val){
+function saveFijoField(id,field,val){
   const data=curData();
   const f=data.serviciosFijos.find(x=>x.id===id);
-  if(f){f.monto=parseFloat(val)||0;saveMonthData(data);renderSummary(data);renderTotals(data);renderDashGastos(data);renderChartBalance(data);}
-}
-function updateFijoEst(id,val){
-  const data=curData();
-  const f=data.serviciosFijos.find(x=>x.id===id);
-  if(f){f.estimado=parseFloat(val)||0;saveMonthData(data);renderSummary(data);renderTotals(data);}
+  if(!f) return;
+  const num=parseFloat(val)||0;
+  if(field==='est') f.estimado=num;
+  else f.monto=num;
+  saveMonthData(data);
+  // Update totals row in-place without re-rendering (keeps focus)
+  const total=data.serviciosFijos.reduce((s,x)=>s+(x.monto||0),0);
+  const totalEst=data.serviciosFijos.reduce((s,x)=>s+(x.estimado||0),0);
+  const elR=document.getElementById('fijo-total-real');
+  const elE=document.getElementById('fijo-total-est');
+  if(elR) elR.textContent=fmt(total);
+  if(elE) elE.textContent=fmt(totalEst);
+  // Update summary cards and totals bar without touching the fijos DOM
+  renderSummary(data);
+  renderTotals(data);
+  renderDashGastos(data);
+  renderChartBalance(data);
 }
 function deleteFijo(id){const data=curData();data.serviciosFijos=data.serviciosFijos.filter(x=>x.id!==id);saveMonthData(data);renderAll();showToast('Servicio eliminado');}
  
@@ -605,7 +652,10 @@ function renderVariables(data){
       const diffHtml=diff!==null?`<span class="diff ${diff>0?'diff-o':'diff-u'}">${diff>0?'+':''}${fmt(diff)} vs estimado</span>`:'';
       html+=`<div class="expense-item">
         <div class="exp-header">
-          <div><div class="exp-desc">${g.descripcion}</div><div class="exp-date">${g.fecha||'Sin fecha'}</div></div>
+          <div>
+            ${g.categoria?`<span style="font-size:11px;background:var(--blue-l);color:var(--blue);padding:1px 7px;border-radius:20px;font-weight:500;margin-bottom:3px;display:inline-block;">${g.categoria}</span>`:''}
+            <div class="exp-desc">${g.descripcion}</div><div class="exp-date">${g.fecha||'Sin fecha'}</div>
+          </div>
           <div style="display:flex;gap:4px;">
             <button class="icon-btn" onclick="openModalVariable('${g.id}')" aria-label="Editar"><i class="ti ti-edit"></i></button>
             <button class="icon-btn d" onclick="deleteVariable('${g.id}')" aria-label="Eliminar"><i class="ti ti-trash"></i></button>
@@ -621,27 +671,56 @@ function renderVariables(data){
   }
   document.getElementById('lista-variables').innerHTML=html;
 }
+const ITEMS_FRECUENTES=[
+  {nombre:'Cena',       estimado:200000},
+  {nombre:'Bolt',       estimado:90000},
+  {nombre:'Tigo Money', estimado:120000},
+  {nombre:'Pasaje',     estimado:130000},
+];
+const ITEMS_NOMBRES=ITEMS_FRECUENTES.map(x=>x.nombre);
+ 
 function openModalVariable(id){
   const data=curData();
   const g=id?data.gastosVariables.find(x=>x.id===id):null;
+  const cat=g?g.categoria:'';
+  // Build options: frecuentes + "Otro (personalizado)"
+  const opts=ITEMS_FRECUENTES.map(i=>`<option value="${i.nombre}" ${cat===i.nombre?'selected':''}>${i.nombre}</option>`).join('');
   modalOpen(g?'Editar gasto variable':'Nuevo gasto variable',`
+    <div class="field">
+      <label>Categoría</label>
+      <select id="m-cat" onchange="onCatChange(this.value)">
+        <option value="" ${!cat||!ITEMS_NOMBRES.includes(cat)?'selected':''}>— Personalizado —</option>
+        ${opts}
+      </select>
+    </div>
     <div class="field"><label>Descripción</label><input type="text" id="m-desc" placeholder="Ej: Supermercado" value="${g?g.descripcion:''}"></div>
     <div class="field"><label>Fecha</label><input type="date" id="m-fecha" value="${g?g.fecha:new Date().toISOString().split('T')[0]}"></div>
     <div class="inline2">
-      <div class="field"><label>Estimado (Gs.)</label><input type="number" id="m-est" placeholder="0" value="${g?(g.estimado||''):''}"></div>
-      <div class="field"><label>Real gastado (Gs.)</label><input type="number" id="m-real" placeholder="0" value="${g?(g.real||''):''}"></div>
+      <div class="field"><label>Estimado (Gs.)</label><input type="number" inputmode="numeric" id="m-est" placeholder="0" value="${g?(g.estimado||''):''}"></div>
+      <div class="field"><label>Real gastado (Gs.)</label><input type="number" inputmode="numeric" id="m-real" placeholder="0" value="${g?(g.real||''):''}"></div>
     </div>
   `,`<button class="btn" onclick="closeModalDirect()">Cancelar</button><button class="btn btn-accent" onclick="saveVariable('${id||''}')">Guardar</button>`);
+}
+function onCatChange(val){
+  const item=ITEMS_FRECUENTES.find(x=>x.nombre===val);
+  if(item){
+    document.getElementById('m-desc').value=item.nombre;
+    const estField=document.getElementById('m-est');
+    if(!estField.value||parseFloat(estField.value)===0){
+      estField.value=item.estimado;
+    }
+  }
 }
 function saveVariable(id){
   const desc=document.getElementById('m-desc').value.trim();
   const fecha=document.getElementById('m-fecha').value;
   const est=parseFloat(document.getElementById('m-est').value)||0;
   const real=parseFloat(document.getElementById('m-real').value)||0;
+  const cat=document.getElementById('m-cat').value||'';
   if(!desc)return;
   const data=curData();
-  if(id){const g=data.gastosVariables.find(x=>x.id===id);if(g){g.descripcion=desc;g.fecha=fecha;g.estimado=est;g.real=real;}}
-  else{data.gastosVariables.push({id:uid(),descripcion:desc,fecha,estimado:est,real});}
+  if(id){const g=data.gastosVariables.find(x=>x.id===id);if(g){g.descripcion=desc;g.fecha=fecha;g.estimado=est;g.real=real;g.categoria=cat;}}
+  else{data.gastosVariables.push({id:uid(),descripcion:desc,fecha,estimado:est,real,categoria:cat});}
   saveMonthData(data);closeModalDirect();renderAll();showToast(id?'Gasto actualizado':'Gasto agregado');
 }
 function deleteVariable(id){const data=curData();data.gastosVariables=data.gastosVariables.filter(x=>x.id!==id);saveMonthData(data);renderAll();showToast('Gasto eliminado');}
@@ -740,8 +819,16 @@ function renderGraficos(data){
   const colors=['#2d5a3d','#c8522a','#2563a8','#b8860b','#6b46a8','#b91c1c','#0f766e','#c2410c','#1d4ed8','#92400e'];
  
   // DONUT
-  const dLabels=[...data.serviciosFijos.filter(f=>f.monto>0).map(f=>f.nombre),...data.gastosVariables.filter(g=>g.real>0).map(g=>g.descripcion)];
-  const dVals=[...data.serviciosFijos.filter(f=>f.monto>0).map(f=>f.monto),...data.gastosVariables.filter(g=>g.real>0).map(g=>g.real)];
+  // Group variables by categoria (or descripcion if no categoria)
+  const varGroups={};
+  data.gastosVariables.forEach(g=>{
+    const key=g.categoria&&ITEMS_NOMBRES.includes(g.categoria)?g.categoria:g.descripcion;
+    if(!varGroups[key]) varGroups[key]={real:0,estimado:0};
+    varGroups[key].real+=(g.real||0);
+    varGroups[key].estimado+=(g.estimado||0);
+  });
+  const dLabels=[...data.serviciosFijos.filter(f=>f.monto>0).map(f=>f.nombre),...Object.keys(varGroups).filter(k=>varGroups[k].real>0)];
+  const dVals=[...data.serviciosFijos.filter(f=>f.monto>0).map(f=>f.monto),...Object.keys(varGroups).filter(k=>varGroups[k].real>0).map(k=>varGroups[k].real)];
   if(chartDonut){chartDonut.destroy();chartDonut=null;}
   if(dVals.length>0){
     chartDonut=new Chart(document.getElementById('chart-donut'),{
@@ -754,9 +841,10 @@ function renderGraficos(data){
  
   // EST VS REAL
   if(chartER){chartER.destroy();chartER=null;}
-  const vl=data.gastosVariables.map(g=>g.descripcion.length>12?g.descripcion.slice(0,12)+'…':g.descripcion);
-  const vE=data.gastosVariables.map(g=>g.estimado||0);
-  const vR=data.gastosVariables.map(g=>g.real||0);
+  const vKeys=Object.keys(varGroups);
+  const vl=vKeys.map(k=>k.length>12?k.slice(0,12)+'…':k);
+  const vE=vKeys.map(k=>varGroups[k].estimado||0);
+  const vR=vKeys.map(k=>varGroups[k].real||0);
   if(vl.length>0){
     chartER=new Chart(document.getElementById('chart-estreal'),{
       type:'bar',
@@ -792,7 +880,7 @@ function renderGraficos(data){
   // TOP GASTOS
   const all=[
     ...data.serviciosFijos.filter(f=>f.monto>0).map(f=>({nombre:f.nombre,monto:f.monto,tipo:'Fijo'})),
-    ...data.gastosVariables.filter(g=>g.real>0).map(g=>({nombre:g.descripcion,monto:g.real,tipo:'Variable'}))
+    ...Object.keys(varGroups).filter(k=>varGroups[k].real>0).map(k=>({nombre:k,monto:varGroups[k].real,tipo:'Variable'}))
   ].sort((a,b)=>b.monto-a.monto).slice(0,5);
   const maxG=all[0]?.monto||1;
   const topColors=['#b91c1c','#c8522a','#b8860b','#2d5a3d','#2563a8'];
