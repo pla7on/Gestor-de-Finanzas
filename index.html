@@ -2,240 +2,300 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Control de Gastos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mis Finanzas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-:root{--bg:#f7f5f0;--surface:#fff;--surface2:#f0ede6;--border:#e2ddd5;--text:#1a1814;--text2:#6b6660;--text3:#9e9890;--accent:#2d5a3d;--accent-l:#e8f0ea;--acc2:#c8522a;--acc2-l:#fdf0eb;--gold:#b8860b;--gold-l:#fef9e7;--blue:#2563a8;--blue-l:#eff4fb;--danger:#b91c1c;--danger-l:#fef2f2;--r:12px;--rs:8px;}
-@media(prefers-color-scheme:dark){:root{--bg:#141210;--surface:#1e1c18;--surface2:#262420;--border:#312e28;--text:#f0ede6;--text2:#a09890;--text3:#6b6660;--accent-l:#1a2e20;--acc2-l:#2e1a10;--gold-l:#2e2510;--blue-l:#0e1e32;--danger-l:#2e1010;}}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;min-height:100vh;}
-h1,h2,h3{font-family:'DM Serif Display',serif;font-weight:400;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#0d0e14;
+  --bg2:#13141d;
+  --surface:#1a1c28;
+  --surface2:#21243a;
+  --surface3:#272a42;
+  --border:#2e3150;
+  --text:#e8eaf6;
+  --text2:#8b90b8;
+  --text3:#565a7a;
+  --cyan:#00d4ff;
+  --cyan-d:#00a8cc;
+  --cyan-gl:rgba(0,212,255,.12);
+  --purple:#a78bfa;
+  --purple-d:#7c3aed;
+  --purple-gl:rgba(167,139,250,.12);
+  --pink:#f472b6;
+  --pink-gl:rgba(244,114,182,.12);
+  --green:#34d399;
+  --green-gl:rgba(52,211,153,.12);
+  --red:#f87171;
+  --red-gl:rgba(248,113,113,.12);
+  --gold:#fbbf24;
+  --gold-gl:rgba(251,191,36,.12);
+  --r:16px;--rs:10px;
+  --nav-h:70px;
+}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;display:flex;flex-direction:column;}
  
-/* NAV */
-.top-nav{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
-.nav-inner{max-width:1100px;margin:0 auto;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;height:60px;}
-.nav-logo{font-family:'DM Serif Display',serif;font-size:20px;color:var(--accent);display:flex;align-items:center;gap:8px;}
-.nav-tabs{display:flex;gap:2px;overflow-x:auto;}
-.nav-tab{border:none;background:transparent;padding:8px 14px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text2);transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
-.nav-tab:hover{background:var(--surface2);color:var(--text);}
-.nav-tab.active{background:var(--accent-l);color:var(--accent);font-weight:500;}
-.nav-tab i{font-size:16px;}
+/* ---- SCROLLBAR ---- */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
  
-/* MAIN */
-.main{max-width:1100px;margin:0 auto;padding:1.5rem 1rem;}
+/* ---- TOP HEADER ---- */
+.top-header{
+  flex-shrink:0;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  padding:0 1.25rem;
+  height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:relative;z-index:50;
+}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;}
+.logo-text{font-size:16px;font-weight:600;color:var(--text);}
+.header-month{display:flex;align-items:center;gap:8px;}
+.month-btn{width:32px;height:32px;border:1px solid var(--border);background:var(--surface);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all .15s;font-size:14px;}
+.month-btn:hover,.month-btn:active{border-color:var(--cyan);color:var(--cyan);}
+.month-label{font-size:14px;font-weight:600;min-width:130px;text-align:center;color:var(--text);}
+.header-actions{display:flex;gap:8px;}
+.btn-icon{width:34px;height:34px;border:1px solid var(--border);background:var(--surface);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:16px;transition:all .15s;}
+.btn-icon:hover{border-color:var(--cyan);color:var(--cyan);}
+ 
+/* ---- CONTENT AREA ---- */
+.content-area{flex:1;overflow-y:auto;overflow-x:hidden;padding:1.25rem 1.25rem 1rem;-webkit-overflow-scrolling:touch;}
+@media(min-width:768px){.content-area{padding:1.5rem 2rem 1rem;max-width:1100px;margin:0 auto;width:100%;}}
+ 
+/* ---- SECTIONS ---- */
 .section{display:none;}
 .section.active{display:block;}
  
-/* MONTH BAR */
-.month-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;}
-.month-nav{display:flex;align-items:center;gap:8px;}
-.month-btn{width:36px;height:36px;border:1px solid var(--border);background:var(--surface);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all .15s;}
-.month-btn:hover{border-color:var(--accent);color:var(--accent);}
-.month-label{font-family:'DM Serif Display',serif;font-size:24px;min-width:200px;text-align:center;}
+/* ---- BOTTOM NAV ---- */
+.bottom-nav{
+  flex-shrink:0;
+  height:var(--nav-h);
+  background:var(--bg2);
+  border-top:1px solid var(--border);
+  display:flex;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.nav-tab{flex:1;border:none;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;color:var(--text3);transition:all .2s;padding:8px 4px;font-family:'Inter',sans-serif;}
+.nav-tab i{font-size:22px;transition:all .2s;}
+.nav-tab span{font-size:10px;font-weight:500;letter-spacing:.02em;text-transform:uppercase;}
+.nav-tab.active{color:var(--cyan);}
+.nav-tab.active i{filter:drop-shadow(0 0 8px var(--cyan));}
  
-/* BTN */
-.btn{border:1px solid var(--border);background:var(--surface);padding:8px 14px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
-.btn:hover{border-color:var(--accent);color:var(--accent);}
-.btn-accent{background:var(--accent);border-color:var(--accent);color:#fff;}
-.btn-accent:hover{background:#234832;border-color:#234832;color:#fff;}
-.btn-sm{padding:6px 12px;font-size:13px;}
-.btn-danger{border-color:var(--danger);color:var(--danger);}
-.btn-danger:hover{background:var(--danger-l);}
+/* ---- STAT CARDS ---- */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.25rem;}
+@media(min-width:600px){.stats-grid{grid-template-columns:repeat(4,1fr);}}
+.stat-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:1rem 1.1rem;
+  position:relative;overflow:hidden;
+  transition:border-color .2s;
+}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:var(--r) var(--r) 0 0;}
+.stat-card.c::before{background:linear-gradient(90deg,var(--cyan),var(--purple));}
+.stat-card.r::before{background:linear-gradient(90deg,var(--red),var(--pink));}
+.stat-card.g::before{background:linear-gradient(90deg,var(--gold),var(--pink));}
+.stat-card.gr::before{background:linear-gradient(90deg,var(--green),var(--cyan));}
+.stat-card.p::before{background:linear-gradient(90deg,var(--purple),var(--pink));}
+.stat-label{font-size:11px;color:var(--text2);font-weight:500;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+.stat-val{font-size:18px;font-weight:700;line-height:1.1;}
+.stat-val.c{color:var(--cyan);}
+.stat-val.r{color:var(--red);}
+.stat-val.g{color:var(--gold);}
+.stat-val.gr{color:var(--green);}
+.stat-val.p{color:var(--purple);}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:3px;}
  
-/* SUMMARY */
-.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:1.5rem;}
-.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;}
-.sum-card.a{background:var(--accent-l);border-color:transparent;}
-.sum-card.d{background:var(--danger-l);border-color:transparent;}
-.sum-card.g{background:var(--gold-l);border-color:transparent;}
-.sum-card.b{background:var(--blue-l);border-color:transparent;}
-.sum-label{font-size:11px;color:var(--text2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px;}
-.sum-val{font-family:'DM Serif Display',serif;font-size:20px;line-height:1.2;}
-.sum-val.a{color:var(--accent);}
-.sum-val.d{color:var(--danger);}
-.sum-val.g{color:var(--gold);}
-.sum-val.b{color:var(--blue);}
-.sum-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+/* ---- GLOW CARD ---- */
+.glow-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:1.25rem;}
+@media(max-width:400px){.glow-row{grid-template-columns:1fr 1fr;}}
+.glow-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:.75rem 1rem;text-align:center;}
+.glow-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+.glow-val{font-size:15px;font-weight:700;}
  
-/* TOTALS BAR */
-.totals-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;}
-.tot-item{text-align:center;}
-.tot-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;}
-.tot-val{font-family:'DM Serif Display',serif;font-size:18px;}
-.tot-val.a{color:var(--accent);}
-.tot-val.d{color:var(--danger);}
-.tot-val.g{color:var(--gold);}
-.tot-val.b{color:var(--blue);}
- 
-/* TWO COL */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;}
-@media(max-width:700px){.two-col{grid-template-columns:1fr;}}
- 
-/* CARD */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:1.5rem;}
+/* ---- GLASS CARD ---- */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  overflow:hidden;
+  margin-bottom:1.25rem;
+}
 .card:last-child{margin-bottom:0;}
-.card-header{padding:.9rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
-.card-title{font-family:'DM Serif Display',serif;font-size:17px;display:flex;align-items:center;gap:8px;}
-.card-title i{font-size:18px;color:var(--text2);}
-.card-body{padding:1.25rem;}
+.card-header{padding:.85rem 1.15rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;color:var(--text);}
+.card-title i{font-size:17px;color:var(--cyan);}
+.card-body{padding:1.15rem;}
  
-/* INPUTS */
-input[type=text],input[type=number],input[type=date],select,textarea{width:100%;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .15s;}
-input:focus,select:focus,textarea:focus{border-color:var(--accent);}
-label{font-size:13px;color:var(--text2);display:block;margin-bottom:4px;}
-.field{margin-bottom:12px;}
+/* ---- INPUTS — font-size:16px prevents iOS zoom ---- */
+input[type=text],input[type=number],input[type=date],select,textarea{
+  width:100%;
+  border:1px solid var(--border);
+  background:var(--surface2);
+  color:var(--text);
+  border-radius:var(--rs);
+  padding:10px 14px;
+  font-family:'Inter',sans-serif;
+  font-size:16px; /* 16px = no zoom on iOS */
+  outline:none;
+  transition:border-color .15s,box-shadow .15s;
+  -webkit-appearance:none;
+  appearance:none;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,212,255,.1);}
+label{font-size:13px;color:var(--text2);display:block;margin-bottom:5px;font-weight:500;}
+.field{margin-bottom:14px;}
 .field:last-child{margin-bottom:0;}
-.inline2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-@media(max-width:460px){.inline2{grid-template-columns:1fr;}}
+.inline2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:440px){.inline2{grid-template-columns:1fr;}}
  
-/* LIST ITEM */
-.list-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:8px;flex-wrap:wrap;}
+/* ---- BUTTONS ---- */
+.btn{border:1px solid var(--border);background:var(--surface2);padding:9px 16px;border-radius:var(--rs);cursor:pointer;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;color:var(--text2);transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+.btn:hover,.btn:active{border-color:var(--cyan);color:var(--cyan);}
+.btn-accent{background:linear-gradient(135deg,var(--cyan),var(--purple));border:none;color:#0d0e14;font-weight:600;}
+.btn-accent:hover{opacity:.9;color:#0d0e14;}
+.btn-sm{padding:7px 13px;font-size:13px;}
+.btn-danger{border-color:var(--red-gl);color:var(--red);}
+.btn-danger:hover{background:var(--red-gl);}
+ 
+/* ---- LIST ITEMS ---- */
+.list-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);gap:8px;}
 .list-item:last-child{border-bottom:none;padding-bottom:0;}
 .li-info{flex:1;min-width:0;}
 .li-name{font-weight:500;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .li-sub{font-size:12px;color:var(--text2);margin-top:1px;}
-.li-amt{font-weight:500;font-size:15px;text-align:right;white-space:nowrap;}
-.li-amt.d{color:var(--danger);}
-.li-amt.a{color:var(--accent);}
+.li-amt{font-weight:600;font-size:14px;text-align:right;white-space:nowrap;}
+.li-amt.r{color:var(--red);}
+.li-amt.gr{color:var(--green);}
 .li-actions{display:flex;gap:4px;}
-.icon-btn{width:28px;height:28px;border:1px solid var(--border);background:transparent;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);transition:all .15s;font-size:14px;}
-.icon-btn:hover{border-color:var(--accent);color:var(--accent);}
-.icon-btn.d:hover{border-color:var(--danger);color:var(--danger);}
+.icon-btn{width:30px;height:30px;border:1px solid var(--border);background:transparent;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);transition:all .15s;font-size:14px;}
+.icon-btn:hover,.icon-btn:active{border-color:var(--cyan);color:var(--cyan);}
+.icon-btn.d:hover,.icon-btn.d:active{border-color:var(--red);color:var(--red);}
  
-/* BADGE */
-.badge{display:inline-flex;align-items:center;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500;}
-.bp{background:var(--accent-l);color:var(--accent);}
-.bu{background:var(--danger-l);color:var(--danger);}
-.bpa{background:var(--gold-l);color:var(--gold);}
+/* ---- BADGES ---- */
+.badge{display:inline-flex;align-items:center;font-size:11px;padding:2px 9px;border-radius:20px;font-weight:600;}
+.bp{background:var(--green-gl);color:var(--green);}
+.bu{background:var(--red-gl);color:var(--red);}
+.bpa{background:var(--gold-gl);color:var(--gold);}
+.bc{background:var(--cyan-gl);color:var(--cyan);}
  
-/* SPOTIFY GRID */
-.spotify-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-@media(max-width:480px){.spotify-grid{grid-template-columns:1fr;}}
-.member-card{background:var(--surface2);border-radius:10px;padding:1rem;text-align:center;}
-.member-avatar{width:44px;height:44px;border-radius:50%;color:#fff;font-family:'DM Serif Display',serif;font-size:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;}
-.member-name{font-weight:500;font-size:14px;margin-bottom:6px;}
+/* ---- PROGRESS ---- */
+.prog-wrap{height:4px;background:var(--surface3);border-radius:2px;margin-top:5px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:2px;transition:width .4s;}
+ 
+/* ---- INNER TABS ---- */
+.inner-tabs{display:flex;gap:4px;margin-bottom:1.25rem;overflow-x:auto;}
+.inner-tab{border:1px solid var(--border);background:var(--surface);padding:8px 18px;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:var(--text2);border-radius:20px;white-space:nowrap;transition:all .15s;}
+.inner-tab.active{background:var(--cyan-gl);border-color:var(--cyan);color:var(--cyan);}
+ 
+/* ---- SEC HEADER ---- */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;}
+.sec-title{font-size:16px;font-weight:600;}
+ 
+/* ---- DIVIDER ---- */
+.divider{height:1px;background:var(--border);margin:1rem 0;}
+ 
+/* ---- FIJOS TABLE ---- */
+.fijos-header{display:grid;grid-template-columns:1fr 100px 100px 30px;gap:6px;padding:6px 0 8px;border-bottom:2px solid var(--border);margin-bottom:2px;font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;color:var(--text3);}
+.fijos-header span{text-align:center;}
+.fijos-header span:first-child{text-align:left;}
+.fijo-row{display:grid;grid-template-columns:1fr 100px 100px 30px;gap:6px;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);}
+.fijo-row:last-child{border-bottom:none;}
+.fijo-totals-row{border-top:2px solid var(--border);border-bottom:none;padding-top:10px;margin-top:2px;}
+.fijo-name{font-size:13px;font-weight:500;display:flex;align-items:center;min-width:0;overflow:hidden;}
+.fijo-name i{flex-shrink:0;}
+.fijo-input-est,.fijo-input-real{width:100%;text-align:center;padding:7px 6px;font-size:16px;}
+.fijo-input-est{border-color:rgba(251,191,36,.3);}
+.fijo-input-est:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-gl);}
+@media(max-width:500px){
+  .fijos-header{grid-template-columns:1fr 85px 85px 26px;gap:4px;}
+  .fijo-row{grid-template-columns:1fr 85px 85px 26px;gap:4px;}
+}
+@media(max-width:400px){
+  .fijos-header{grid-template-columns:1fr 75px 75px 24px;font-size:9px;}
+  .fijo-row{grid-template-columns:1fr 75px 75px 24px;}
+  .fijo-name{font-size:12px;}
+  .fijo-input-est,.fijo-input-real{padding:6px 3px;}
+}
+ 
+/* ---- EXPENSE CARD ---- */
+.expense-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:1rem;margin-bottom:8px;}
+.expense-item:last-child{margin-bottom:0;}
+.exp-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;}
+.exp-desc{font-weight:600;font-size:14px;}
+.exp-date{font-size:11px;color:var(--text3);}
+.exp-amounts{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.exp-box{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:7px 10px;}
+.exp-box-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;font-weight:600;}
+.exp-box-val{font-weight:700;font-size:14px;margin-top:2px;}
+.exp-box-val.r{color:var(--red);}
+.exp-box-val.e{color:var(--gold);}
+.diff{font-size:11px;padding:2px 8px;border-radius:4px;display:inline-block;margin-top:5px;font-weight:600;}
+.diff-o{background:var(--red-gl);color:var(--red);}
+.diff-u{background:var(--green-gl);color:var(--green);}
+ 
+/* ---- SPOTIFY MEMBERS ---- */
+.spotify-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+@media(max-width:460px){.spotify-grid{grid-template-columns:1fr;}}
+.member-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:1rem;text-align:center;}
+.member-avatar{width:42px;height:42px;border-radius:50%;color:#0d0e14;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;}
+.member-name{font-weight:600;font-size:14px;margin-bottom:6px;}
 .payment-history{font-size:12px;color:var(--text2);margin-top:8px;max-height:80px;overflow-y:auto;}
 .pay-entry{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px dashed var(--border);}
 .pay-entry:last-child{border-bottom:none;}
  
-/* EXPENSE CARD */
-.expense-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:10px;}
-.expense-item:last-child{margin-bottom:0;}
-.exp-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;}
-.exp-desc{font-weight:500;font-size:14px;}
-.exp-date{font-size:12px;color:var(--text3);}
-.exp-amounts{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.exp-box{background:var(--surface2);border-radius:6px;padding:6px 10px;}
-.exp-box-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.03em;}
-.exp-box-val{font-weight:500;font-size:14px;margin-top:1px;}
-.exp-box-val.r{color:var(--danger);}
-.exp-box-val.e{color:var(--gold);}
-.diff{font-size:11px;padding:2px 6px;border-radius:4px;display:inline-block;margin-top:4px;}
-.diff-o{background:var(--danger-l);color:var(--danger);}
-.diff-u{background:var(--accent-l);color:var(--accent);}
- 
-/* EMPTY */
-.empty{text-align:center;padding:2rem;color:var(--text3);}
-.empty i{font-size:32px;display:block;margin-bottom:8px;}
-.empty p{font-size:14px;}
- 
-/* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s;}
+/* ---- MODAL ---- */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:flex-end;justify-content:center;padding:0;opacity:0;pointer-events:none;transition:opacity .2s;}
 .modal-overlay.open{opacity:1;pointer-events:all;}
-.modal{background:var(--surface);border-radius:var(--r);width:100%;max-width:460px;max-height:90vh;overflow-y:auto;transform:translateY(8px);transition:transform .2s;}
+@media(min-width:600px){.modal-overlay{align-items:center;padding:1rem;}}
+.modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;transform:translateY(20px);transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
+@media(min-width:600px){.modal{border-radius:var(--r);transform:scale(.96) translateY(8px);}}
 .modal-overlay.open .modal{transform:translateY(0);}
-.modal-header{padding:1.1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.modal-title{font-family:'DM Serif Display',serif;font-size:18px;}
+@media(min-width:600px){.modal-overlay.open .modal{transform:scale(1) translateY(0);}}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:10px auto 0;}
+@media(min-width:600px){.modal-handle{display:none;}}
+.modal-header{padding:1rem 1.25rem .85rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-size:16px;font-weight:600;}
 .modal-body{padding:1.25rem;}
 .modal-footer{padding:1rem 1.25rem;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;}
  
-/* INNER TABS */
-.inner-tabs{display:flex;gap:4px;margin-bottom:1.5rem;border-bottom:1px solid var(--border);overflow-x:auto;}
-.inner-tab{border:none;background:none;padding:10px 16px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:all .15s;}
-.inner-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:500;}
- 
-/* SECTION HEADER */
-.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px;}
-.sec-title{font-family:'DM Serif Display',serif;font-size:18px;}
- 
-/* CHART */
+/* ---- CHART ---- */
 .chart-wrap{position:relative;width:100%;}
  
-/* DIVIDER */
-.divider{height:1px;background:var(--border);margin:1rem 0;}
+/* ---- EMPTY ---- */
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--text3);}
+.empty i{font-size:36px;display:block;margin-bottom:10px;opacity:.5;}
+.empty p{font-size:14px;}
  
-/* PROGRESS */
-.prog-wrap{height:5px;background:var(--border);border-radius:3px;margin-top:5px;overflow:hidden;}
-.prog-fill{height:100%;border-radius:3px;transition:width .4s;}
+/* ---- TOAST ---- */
+.toast{position:fixed;bottom:calc(var(--nav-h) + 12px);left:50%;transform:translateX(-50%) translateY(8px);background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 20px;border-radius:20px;font-size:14px;font-weight:500;z-index:999;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;box-shadow:0 8px 30px rgba(0,0,0,.4);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
  
-/* TOAST */
-.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--text);color:var(--surface);padding:10px 18px;border-radius:8px;font-size:14px;z-index:999;opacity:0;transform:translateY(8px);transition:all .2s;pointer-events:none;}
-.toast.show{opacity:1;transform:translateY(0);}
- 
-/* CHART LEGEND */
+/* ---- CHART LEGEND ---- */
 .chart-legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px;font-size:12px;color:var(--text2);}
-.legend-dot{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;}
  
-/* SALARY WRAP */
-.salary-wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+/* ---- TWO COL ---- */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+@media(max-width:680px){.two-col{grid-template-columns:1fr;}}
  
-/* SOBRANTE */
+/* ---- INGRESOS ---- */
 .sob-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;gap:12px;flex-wrap:wrap;}
  
-@media(max-width:480px){
-  .summary-grid{grid-template-columns:1fr 1fr;}
-  .main{padding:1rem;}
-  .month-label{font-size:18px;min-width:160px;}
-  .nav-logo-text{display:none;}
-}
-@media(max-width:640px){
-  .fijos-grid{grid-template-columns:1fr 110px 110px 32px !important;}
-}
-@media(max-width:460px){
-  .fijos-grid{grid-template-columns:1fr !important; gap:6px !important;}
-}
-/* Fijos table */
-.fijos-header{display:grid;grid-template-columns:1fr 120px 120px 32px;gap:6px;padding:6px 0 8px;border-bottom:2px solid var(--border);margin-bottom:2px;font-size:11px;text-transform:uppercase;letter-spacing:.04em;font-weight:500;color:var(--text2);}
-.fijos-header span{text-align:center;}
-.fijos-header span:first-child{text-align:left;}
-.fijo-row{display:grid;grid-template-columns:1fr 120px 120px 32px;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);}
-.fijo-row:last-child{border-bottom:none;}
-.fijo-totals-row{border-top:2px solid var(--border);border-bottom:none;padding-top:10px;margin-top:2px;}
-.fijo-name{font-size:14px;font-weight:500;display:flex;align-items:center;min-width:0;overflow:hidden;}
-.fijo-name i{flex-shrink:0;}
-.fijo-input-est,.fijo-input-real{width:100%;text-align:center;}
-@media(max-width:560px){
-  .fijos-header{grid-template-columns:1fr 90px 90px 28px;gap:4px;}
-  .fijo-row{grid-template-columns:1fr 90px 90px 28px;gap:4px;}
-  .fijo-name{font-size:13px;}
-}
-@media(max-width:420px){
-  .fijos-header{grid-template-columns:1fr 80px 80px 26px;font-size:10px;}
-  .fijo-row{grid-template-columns:1fr 80px 80px 26px;}
-  .fijo-name{font-size:12px;}
-  .fijo-input-est,.fijo-input-real{padding:6px 4px;font-size:13px;}
-}
+/* ---- NEON DIVIDER ---- */
+.neon-line{height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);margin:1rem 0;opacity:.3;}
 </style>
 </head>
 <body>
- 
-<!-- NAV -->
-<nav class="top-nav">
-  <div class="nav-inner">
-    <div class="nav-logo"><i class="ti ti-wallet" aria-hidden="true"></i><span class="nav-logo-text"> Mis Finanzas</span></div>
-    <div class="nav-tabs">
-      <button class="nav-tab active" onclick="switchSection('dashboard')" id="tab-dashboard"><i class="ti ti-layout-dashboard"></i> Resumen</button>
-      <button class="nav-tab" onclick="switchSection('gastos')" id="tab-gastos"><i class="ti ti-receipt"></i> Gastos</button>
-      <button class="nav-tab" onclick="switchSection('ingresos')" id="tab-ingresos"><i class="ti ti-cash"></i> Ingresos</button>
-      <button class="nav-tab" onclick="switchSection('graficos')" id="tab-graficos"><i class="ti ti-chart-pie"></i> Gráficos</button>
-    </div>
-  </div>
-</nav>
  
 <!-- TOAST -->
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -243,6 +303,7 @@ label{font-size:13px;color:var(--text2);display:block;margin-bottom:4px;}
 <!-- MODAL -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)" role="dialog" aria-modal="true">
   <div class="modal" id="modal-box">
+    <div class="modal-handle"></div>
     <div class="modal-header">
       <span class="modal-title" id="modal-title"></span>
       <button class="icon-btn" onclick="closeModalDirect()" aria-label="Cerrar"><i class="ti ti-x"></i></button>
@@ -252,36 +313,43 @@ label{font-size:13px;color:var(--text2);display:block;margin-bottom:4px;}
   </div>
 </div>
  
-<main class="main">
- 
-<!-- MONTH BAR -->
-<div class="month-bar">
-  <div class="month-nav">
+<!-- TOP HEADER -->
+<header class="top-header">
+  <div class="logo">
+    <div class="logo-icon"><i class="ti ti-wallet" aria-hidden="true"></i></div>
+    <span class="logo-text">Mis Finanzas</span>
+  </div>
+  <div class="header-month">
     <button class="month-btn" onclick="changeMonth(-1)" aria-label="Mes anterior"><i class="ti ti-chevron-left"></i></button>
-    <div class="month-label" id="month-label" aria-live="polite">Enero 2025</div>
+    <div class="month-label" id="month-label" aria-live="polite">Mayo 2026</div>
     <button class="month-btn" onclick="changeMonth(1)" aria-label="Mes siguiente"><i class="ti ti-chevron-right"></i></button>
   </div>
-  <button class="btn btn-sm" onclick="exportPDF()"><i class="ti ti-file-type-pdf" aria-hidden="true"></i> Exportar PDF</button>
-</div>
+  <div class="header-actions">
+    <button class="btn-icon" onclick="exportPDF()" title="Exportar PDF"><i class="ti ti-file-type-pdf"></i></button>
+  </div>
+</header>
  
-<!-- ===== DASHBOARD ===== -->
+<!-- CONTENT -->
+<div class="content-area" id="content-area">
+ 
+<!-- ===== RESUMEN ===== -->
 <section class="section active" id="section-dashboard">
-  <div class="summary-grid" id="summary-cards"></div>
-  <div class="totals-bar" id="totals-bar"></div>
+  <div class="stats-grid" id="summary-cards"></div>
+  <div class="glow-row" id="totals-bar"></div>
   <div class="two-col">
     <div class="card">
-      <div class="card-header"><span class="card-title"><i class="ti ti-chart-bar" aria-hidden="true"></i> Gastos del mes</span></div>
-      <div class="card-body" style="max-height:280px;overflow-y:auto;" id="dash-gastos"></div>
+      <div class="card-header"><span class="card-title"><i class="ti ti-trending-down"></i> Gastos del mes</span></div>
+      <div class="card-body" style="max-height:260px;overflow-y:auto;" id="dash-gastos"></div>
     </div>
     <div class="card">
-      <div class="card-header"><span class="card-title"><i class="ti ti-users" aria-hidden="true"></i> Spotify — cobros</span></div>
+      <div class="card-header"><span class="card-title"><i class="ti ti-brand-spotify"></i> Spotify — cobros</span></div>
       <div class="card-body" id="dash-spotify"></div>
     </div>
   </div>
   <div class="card">
-    <div class="card-header"><span class="card-title"><i class="ti ti-activity" aria-hidden="true"></i> Balance del mes</span></div>
+    <div class="card-header"><span class="card-title"><i class="ti ti-chart-bar"></i> Balance del mes</span></div>
     <div class="card-body">
-      <div class="chart-wrap" style="height:220px;"><canvas id="chart-balance" role="img" aria-label="Gráfico de balance del mes"></canvas></div>
+      <div class="chart-wrap" style="height:200px;"><canvas id="chart-balance" role="img" aria-label="Gráfico de balance del mes"></canvas></div>
     </div>
   </div>
 </section>
@@ -295,17 +363,17 @@ label{font-size:13px;color:var(--text2);display:block;margin-bottom:4px;}
   <div id="inner-fijos">
     <div class="sec-header">
       <span class="sec-title">Servicios fijos</span>
-      <button class="btn btn-accent btn-sm" onclick="openModalServicio()"><i class="ti ti-plus" aria-hidden="true"></i> Agregar</button>
+      <button class="btn btn-accent btn-sm" onclick="openModalServicio()"><i class="ti ti-plus"></i> Agregar</button>
     </div>
     <div class="card"><div class="card-body" id="lista-fijos"></div></div>
-    <div class="divider"></div>
-    <div class="sec-header"><span class="sec-title">Cuenta Spotify compartida</span></div>
+    <div class="neon-line"></div>
+    <div class="sec-header"><span class="sec-title">Spotify compartido</span></div>
     <div class="spotify-grid" id="spotify-members"></div>
   </div>
   <div id="inner-variables" style="display:none;">
     <div class="sec-header">
       <span class="sec-title">Gastos variables</span>
-      <button class="btn btn-accent btn-sm" onclick="openModalVariable()"><i class="ti ti-plus" aria-hidden="true"></i> Agregar</button>
+      <button class="btn btn-accent btn-sm" onclick="openModalVariable()"><i class="ti ti-plus"></i> Agregar</button>
     </div>
     <div id="lista-variables"></div>
   </div>
@@ -314,38 +382,36 @@ label{font-size:13px;color:var(--text2);display:block;margin-bottom:4px;}
 <!-- ===== INGRESOS ===== -->
 <section class="section" id="section-ingresos">
   <div class="card">
-    <div class="card-header"><span class="card-title"><i class="ti ti-cash" aria-hidden="true"></i> Salario del mes</span></div>
+    <div class="card-header"><span class="card-title"><i class="ti ti-cash"></i> Salario del mes</span></div>
     <div class="card-body">
       <div class="field">
         <label>Ingreso de salario (Gs.)</label>
-        <div class="salary-wrap">
-          <input type="number" id="salary-input" placeholder="0" style="max-width:260px;" oninput="saveSalary()">
-        </div>
+        <input type="number" inputmode="numeric" id="salary-input" placeholder="0" style="max-width:280px;" onchange="saveSalary()" onblur="saveSalary()">
       </div>
     </div>
   </div>
   <div class="card">
-    <div class="card-header"><span class="card-title"><i class="ti ti-arrow-back" aria-hidden="true"></i> Sobrante del mes anterior</span></div>
+    <div class="card-header"><span class="card-title"><i class="ti ti-arrow-back"></i> Sobrante del mes anterior</span></div>
     <div class="card-body">
       <div class="sob-row">
-        <span style="font-size:14px;color:var(--text2);">Sobrante calculado del mes anterior</span>
-        <span style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--accent);" id="sobrante-auto">Gs. 0</span>
+        <span style="font-size:14px;color:var(--text2);">Sobrante calculado automáticamente</span>
+        <span style="font-size:18px;font-weight:700;color:var(--cyan);" id="sobrante-auto">Gs. 0</span>
       </div>
       <div class="divider"></div>
       <div class="field">
         <label>Ajuste manual del sobrante (Gs.)</label>
-        <input type="number" id="sobrante-manual" placeholder="0" style="max-width:260px;" oninput="saveSobranteManual()">
+        <input type="number" inputmode="numeric" id="sobrante-manual" placeholder="0" style="max-width:280px;" onchange="saveSobranteManual()" onblur="saveSobranteManual()">
       </div>
       <div class="sob-row" style="border-top:1px solid var(--border);padding-top:12px;margin-top:4px;">
-        <span style="font-size:14px;font-weight:500;">Capital neto total</span>
-        <span style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--accent);" id="capital-neto-display">Gs. 0</span>
+        <span style="font-size:14px;font-weight:600;">Capital neto total</span>
+        <span style="font-size:20px;font-weight:700;color:var(--cyan);" id="capital-neto-display">Gs. 0</span>
       </div>
     </div>
   </div>
   <div class="card">
     <div class="card-header">
-      <span class="card-title"><i class="ti ti-building-store" aria-hidden="true"></i> Servicios prestados / Ingresos extra</span>
-      <button class="btn btn-accent btn-sm" onclick="openModalIngreso()"><i class="ti ti-plus" aria-hidden="true"></i> Agregar</button>
+      <span class="card-title"><i class="ti ti-building-store"></i> Servicios prestados / Extra</span>
+      <button class="btn btn-accent btn-sm" onclick="openModalIngreso()"><i class="ti ti-plus"></i> Agregar</button>
     </div>
     <div class="card-body" id="lista-ingresos"></div>
   </div>
@@ -355,34 +421,52 @@ label{font-size:13px;color:var(--text2);display:block;margin-bottom:4px;}
 <section class="section" id="section-graficos">
   <div class="two-col">
     <div class="card">
-      <div class="card-header"><span class="card-title"><i class="ti ti-chart-donut" aria-hidden="true"></i> Distribución de gastos</span></div>
+      <div class="card-header"><span class="card-title"><i class="ti ti-chart-donut"></i> Distribución</span></div>
       <div class="card-body">
         <div class="chart-legend" id="legend-donut"></div>
-        <div class="chart-wrap" style="height:220px;"><canvas id="chart-donut" role="img" aria-label="Distribución de gastos por categoría"></canvas></div>
+        <div class="chart-wrap" style="height:200px;"><canvas id="chart-donut"></canvas></div>
       </div>
     </div>
     <div class="card">
-      <div class="card-header"><span class="card-title"><i class="ti ti-chart-bar" aria-hidden="true"></i> Estimado vs Real</span></div>
+      <div class="card-header"><span class="card-title"><i class="ti ti-chart-bar"></i> Est. vs Real</span></div>
       <div class="card-body">
-        <div class="chart-wrap" style="height:220px;"><canvas id="chart-estreal" role="img" aria-label="Comparación estimado versus real"></canvas></div>
+        <div class="chart-wrap" style="height:200px;"><canvas id="chart-estreal"></canvas></div>
       </div>
     </div>
   </div>
   <div class="card">
-    <div class="card-header"><span class="card-title"><i class="ti ti-chart-line" aria-hidden="true"></i> Evolución mensual — últimos 6 meses</span></div>
+    <div class="card-header"><span class="card-title"><i class="ti ti-chart-line"></i> Evolución — últimos 6 meses</span></div>
     <div class="card-body">
-      <div class="chart-wrap" style="height:260px;"><canvas id="chart-evol" role="img" aria-label="Evolución de ingresos y gastos en los últimos 6 meses"></canvas></div>
+      <div class="chart-wrap" style="height:240px;"><canvas id="chart-evol"></canvas></div>
     </div>
   </div>
   <div class="card">
-    <div class="card-header"><span class="card-title"><i class="ti ti-trophy" aria-hidden="true"></i> Top gastos del mes</span></div>
+    <div class="card-header"><span class="card-title"><i class="ti ti-trophy"></i> Top gastos del mes</span></div>
     <div class="card-body" id="top-gastos"></div>
   </div>
 </section>
  
-</main>
+</div><!-- end content-area -->
+ 
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav" role="navigation" aria-label="Navegación principal">
+  <button class="nav-tab active" onclick="switchSection('dashboard')" id="tab-dashboard">
+    <i class="ti ti-layout-dashboard"></i><span>Resumen</span>
+  </button>
+  <button class="nav-tab" onclick="switchSection('gastos')" id="tab-gastos">
+    <i class="ti ti-receipt"></i><span>Gastos</span>
+  </button>
+  <button class="nav-tab" onclick="switchSection('ingresos')" id="tab-ingresos">
+    <i class="ti ti-cash"></i><span>Ingresos</span>
+  </button>
+  <button class="nav-tab" onclick="switchSection('graficos')" id="tab-graficos">
+    <i class="ti ti-chart-pie"></i><span>Gráficos</span>
+  </button>
+</nav>
+ 
  
 <script>
+ 
 const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const SP_MEMBERS=['Mika','Lau','Dora'];
 const SP_AMT=16000;
@@ -453,6 +537,7 @@ function switchSection(name){
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('section-'+name).classList.add('active');
   document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('content-area').scrollTop=0;
   renderAll();
 }
 function switchInnerTab(name,btn){
@@ -492,10 +577,10 @@ function renderSummary(data){
   const cap=getCapitalNeto(data);
   const saldo=cap-t.totalGastos;
   document.getElementById('summary-cards').innerHTML=`
-    <div class="sum-card a"><div class="sum-label">Capital neto</div><div class="sum-val a">${fmt(cap)}</div><div class="sum-sub">Salario + sobrante anterior</div></div>
-    <div class="sum-card d"><div class="sum-label">Total gastos</div><div class="sum-val d">${fmt(t.totalGastos)}</div><div class="sum-sub">Fijos + variables</div></div>
-    <div class="sum-card g"><div class="sum-label">Estimado total</div><div class="sum-val g">${fmt(t.totalEst)}</div><div class="sum-sub">Fijos est. + variables est.</div></div>
-    <div class="sum-card ${saldo>=0?'a':'d'}"><div class="sum-label">Saldo final</div><div class="sum-val ${saldo>=0?'a':'d'}">${fmt(saldo)}</div><div class="sum-sub">${saldo>=0?'Disponible':'Déficit'}</div></div>
+    <div class="stat-card c"><div class="stat-label">Capital neto</div><div class="stat-val c">${fmt(cap)}</div><div class="stat-sub">Salario + sobrante</div></div>
+    <div class="stat-card r"><div class="stat-label">Total gastos</div><div class="stat-val r">${fmt(t.totalGastos)}</div><div class="stat-sub">Fijos + variables</div></div>
+    <div class="stat-card g"><div class="stat-label">Estimado total</div><div class="stat-val g">${fmt(t.totalEst)}</div><div class="stat-sub">Fijos + variables</div></div>
+    <div class="stat-card ${saldo>=0?'gr':'r'}"><div class="stat-label">Saldo final</div><div class="stat-val ${saldo>=0?'gr':'r'}">${fmt(saldo)}</div><div class="stat-sub">${saldo>=0?'Disponible':'Déficit'}</div></div>
   `;
 }
  
@@ -503,12 +588,12 @@ function renderTotals(data){
   const t=calcTotals(data);
   const cap=getCapitalNeto(data);
   document.getElementById('totals-bar').innerHTML=`
-    <div class="tot-item"><div class="tot-label">Ingresos</div><div class="tot-val a">${fmt((data.salary||0)+t.spIng+t.ingExt)}</div></div>
-    <div class="tot-item"><div class="tot-label">Gastos fijos</div><div class="tot-val d">${fmt(t.fijos)}</div></div>
-    <div class="tot-item"><div class="tot-label">Gastos variables</div><div class="tot-val d">${fmt(t.vars)}</div></div>
-    <div class="tot-item"><div class="tot-label">Est. total</div><div class="tot-val g">${fmt(t.totalEst)}</div></div>
-    <div class="tot-item"><div class="tot-label">Spotify cobrado</div><div class="tot-val b">${fmt(t.spIng)}</div></div>
-    <div class="tot-item"><div class="tot-label">Ingresos extra</div><div class="tot-val b">${fmt(t.ingExt)}</div></div>
+    <div class="glow-item"><div class="glow-label">Ingresos</div><div class="glow-val" style="color:var(--cyan)">${fmt((data.salary||0)+t.spIng+t.ingExt)}</div></div>
+    <div class="glow-item"><div class="glow-label">Fijos</div><div class="glow-val" style="color:var(--red)">${fmt(t.fijos)}</div></div>
+    <div class="glow-item"><div class="glow-label">Variables</div><div class="glow-val" style="color:var(--pink)">${fmt(t.vars)}</div></div>
+    <div class="glow-item"><div class="glow-label">Estimado</div><div class="glow-val" style="color:var(--gold)">${fmt(t.totalEst)}</div></div>
+    <div class="glow-item"><div class="glow-label">Spotify</div><div class="glow-val" style="color:var(--purple)">${fmt(t.spIng)}</div></div>
+    <div class="glow-item"><div class="glow-label">Extra</div><div class="glow-val" style="color:var(--green)">${fmt(t.ingExt)}</div></div>
   `;
 }
  
@@ -520,12 +605,12 @@ function renderDashGastos(data){
   data.serviciosFijos.forEach(f=>{
     if(!f.monto)return;
     const pct=(f.monto/total*100).toFixed(0);
-    html+=`<div class="list-item"><div class="li-info"><div class="li-name">${f.nombre}</div><div class="prog-wrap"><div class="prog-fill" style="width:${pct}%;background:var(--accent)"></div></div></div><div class="li-amt d">${fmt(f.monto)}</div></div>`;
+    html+=`<div class="list-item"><div class="li-info"><div class="li-name">${f.nombre}</div><div class="prog-wrap"><div class="prog-fill" style="width:${pct}%;background:linear-gradient(90deg,var(--cyan),var(--purple))"></div></div></div><div class="li-amt r">${fmt(f.monto)}</div></div>`;
   });
   data.gastosVariables.forEach(g=>{
     if(!g.real)return;
     const pct=(g.real/total*100).toFixed(0);
-    html+=`<div class="list-item"><div class="li-info"><div class="li-name">${g.descripcion}</div><div class="li-sub">${g.fecha||''}</div><div class="prog-wrap"><div class="prog-fill" style="width:${pct}%;background:var(--acc2)"></div></div></div><div class="li-amt d">${fmt(g.real)}</div></div>`;
+    html+=`<div class="list-item"><div class="li-info"><div class="li-name">${g.descripcion}</div><div class="li-sub">${g.fecha||''}</div><div class="prog-wrap"><div class="prog-fill" style="width:${pct}%;background:linear-gradient(90deg,var(--pink),var(--red))"></div></div></div><div class="li-amt r">${fmt(g.real)}</div></div>`;
   });
   document.getElementById('dash-gastos').innerHTML=html||'<div class="empty"><i class="ti ti-receipt-off" aria-hidden="true"></i><p>Sin gastos registrados</p></div>';
 }
@@ -551,11 +636,17 @@ function renderChartBalance(data){
   chartBal=new Chart(document.getElementById('chart-balance'),{
     type:'bar',
     data:{labels:['Capital neto','Gastos fijos','Gastos variables','Saldo'],
-      datasets:[{data:[cap,t.fijos,t.vars,saldo],backgroundColor:['#2d5a3d','#b91c1c','#c8522a',saldo>=0?'#2563a8':'#7f1d1d'],borderRadius:6,borderSkipped:false}]},
+      datasets:[{data:[cap,t.fijos,t.vars,saldo],backgroundColor:[saldo>=0?'#00d4ff':'#f87171','#f87171','#f472b6',saldo>=0?'#a78bfa':'#7f1d1d'],borderRadius:6,borderSkipped:false}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{y:{ticks:{callback:v=>'Gs.'+(v/1000).toFixed(0)+'k',font:{size:11}}},x:{ticks:{font:{size:11}}}}}
+      scales:{y:{ticks:{callback:v=>'Gs.'+(v/1000).toFixed(0)+'k',color:'#8b90b8'},grid:{color:'#2e3150'}},x:{ticks:{color:'#8b90b8'},grid:{color:'#2e3150'}}}}
   });
 }
+ 
+// ---- CHART DEFAULTS (dark theme) ----
+Chart.defaults.color = '#8b90b8';
+Chart.defaults.borderColor = '#2e3150';
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.font.size = 11;
  
 // ---- SERVICIOS FIJOS ----
 // Uses event delegation on #lista-fijos to avoid inline handlers with string IDs
@@ -581,8 +672,8 @@ function renderFijos(data){
   });
   html+=`<div class="fijo-row fijo-totals-row">
     <div class="fijo-name" style="font-weight:500;">Total</div>
-    <div id="fijo-total-est" style="text-align:center;font-family:'DM Serif Display',serif;font-size:16px;color:var(--gold);">${fmt(totalEst)}</div>
-    <div id="fijo-total-real" style="text-align:center;font-family:'DM Serif Display',serif;font-size:16px;color:var(--danger);">${fmt(total)}</div>
+    <div id="fijo-total-est" style="text-align:center;font-size:15px;font-weight:700;color:var(--gold);">${fmt(totalEst)}</div>
+    <div id="fijo-total-real" style="text-align:center;font-size:15px;font-weight:700;color:var(--red);">${fmt(total)}</div>
     <div></div>
   </div>`;
   const container=document.getElementById('lista-fijos');
@@ -732,7 +823,7 @@ function renderSpotifyMembers(data){
     const pagos=data.spotifyPagos[m]||[];
     const totalP=pagos.reduce((s,p)=>s+p.monto,0);
     const paid=totalP>=SP_AMT;
-    const col=SP_COLORS[m]||'#2d5a3d';
+    const NEON_COLORS={'Mika':'#00d4ff','Lau':'#f472b6','Dora':'#a78bfa'}; const col=NEON_COLORS[m]||'#00d4ff';
     const histHtml=pagos.length?pagos.map(p=>`<div class="pay-entry"><span>${p.fecha||''}</span><span>${fmt(p.monto)}</span></div>`).join(''):'<div style="opacity:.6;font-size:11px;text-align:center;">Sin pagos</div>';
     html+=`<div class="member-card">
       <div class="member-avatar" style="background:${col}">${m.slice(0,2).toUpperCase()}</div>
@@ -791,7 +882,7 @@ function renderIngresos(data){
   const ingItems=data.ingresosExtra||[];
   let html='';
   if(!ingItems.length){html='<div class="empty"><i class="ti ti-building-off" aria-hidden="true"></i><p>Sin ingresos extra registrados</p></div>';}
-  else{ingItems.forEach(i=>{html+=`<div class="list-item"><div class="li-info"><div class="li-name">${i.descripcion}</div><div class="li-sub">${i.fecha||''}</div></div><div class="li-amt a">${fmt(i.monto)}</div><div class="li-actions"><button class="icon-btn d" onclick="deleteIngreso('${i.id}')" aria-label="Eliminar"><i class="ti ti-trash"></i></button></div></div>`;});}
+  else{ingItems.forEach(i=>{html+=`<div class="list-item"><div class="li-info"><div class="li-name">${i.descripcion}</div><div class="li-sub">${i.fecha||''}</div></div><div class="li-amt gr">${fmt(i.monto)}</div><div class="li-actions"><button class="icon-btn d" onclick="deleteIngreso('${i.id}')" aria-label="Eliminar"><i class="ti ti-trash"></i></button></div></div>`;});}
   document.getElementById('lista-ingresos').innerHTML=html;
 }
 function openModalIngreso(){
@@ -816,7 +907,7 @@ function deleteIngreso(id){const data=curData();data.ingresosExtra=data.ingresos
 let chartDonut=null,chartER=null,chartEvol=null;
 function renderGraficos(data){
   const t=calcTotals(data);
-  const colors=['#2d5a3d','#c8522a','#2563a8','#b8860b','#6b46a8','#b91c1c','#0f766e','#c2410c','#1d4ed8','#92400e'];
+  const colors=['#00d4ff','#a78bfa','#f472b6','#fbbf24','#34d399','#f87171','#60a5fa','#fb923c','#c084fc','#4ade80'];
  
   // DONUT
   // Group variables by categoria (or descripcion if no categoria)
@@ -849,7 +940,7 @@ function renderGraficos(data){
     chartER=new Chart(document.getElementById('chart-estreal'),{
       type:'bar',
       data:{labels:vl,datasets:[{label:'Estimado',data:vE,backgroundColor:'#b8860b',borderRadius:4},{label:'Real',data:vR,backgroundColor:'#b91c1c',borderRadius:4}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:11}}}},scales:{y:{ticks:{callback:v=>'Gs.'+(v/1000).toFixed(0)+'k',font:{size:11}}},x:{ticks:{font:{size:10}}}}}
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{color:'#8b90b8',font:{size:11}}}},scales:{y:{ticks:{callback:v=>'Gs.'+(v/1000).toFixed(0)+'k',font:{size:11}}},x:{ticks:{font:{size:10}}}}}
     });
   }
  
@@ -869,12 +960,12 @@ function renderGraficos(data){
   chartEvol=new Chart(document.getElementById('chart-evol'),{
     type:'line',
     data:{labels:eLabels,datasets:[
-      {label:'Ingresos',data:eIng,borderColor:'#2d5a3d',backgroundColor:'rgba(45,90,61,.08)',tension:.3,fill:true,pointRadius:4},
-      {label:'Gastos',data:eGas,borderColor:'#b91c1c',backgroundColor:'rgba(185,28,28,.08)',tension:.3,fill:true,pointRadius:4},
-      {label:'Saldo',data:eSal,borderColor:'#2563a8',backgroundColor:'transparent',tension:.3,borderDash:[5,3],pointRadius:4}
+      {label:'Ingresos',data:eIng,borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,.08)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#00d4ff'},
+      {label:'Gastos',data:eGas,borderColor:'#f87171',backgroundColor:'rgba(248,113,113,.08)',tension:.4,fill:true,pointRadius:4,pointBackgroundColor:'#f87171'},
+      {label:'Saldo',data:eSal,borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,.05)',tension:.4,borderDash:[5,3],pointRadius:4,pointBackgroundColor:'#a78bfa',fill:true}
     ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:11}}}},
-      scales:{y:{ticks:{callback:v=>'Gs.'+(v/1000).toFixed(0)+'k',font:{size:11}}},x:{ticks:{font:{size:11}}}}}
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{color:'#8b90b8',font:{size:11}}}},
+      scales:{y:{ticks:{callback:v=>'Gs.'+(v/1000).toFixed(0)+'k',color:'#8b90b8'},grid:{color:'#2e3150'}},x:{ticks:{color:'#8b90b8'},grid:{color:'#2e3150'}}}}
   });
  
   // TOP GASTOS
@@ -883,7 +974,7 @@ function renderGraficos(data){
     ...Object.keys(varGroups).filter(k=>varGroups[k].real>0).map(k=>({nombre:k,monto:varGroups[k].real,tipo:'Variable'}))
   ].sort((a,b)=>b.monto-a.monto).slice(0,5);
   const maxG=all[0]?.monto||1;
-  const topColors=['#b91c1c','#c8522a','#b8860b','#2d5a3d','#2563a8'];
+  const topColors=['#f87171','#f472b6','#fbbf24','#34d399','#a78bfa'];
   document.getElementById('top-gastos').innerHTML=all.length?all.map((g,i)=>`
     <div class="list-item">
       <div class="li-info">
@@ -893,7 +984,7 @@ function renderGraficos(data){
         </div>
         <div class="prog-wrap" style="margin-top:6px;"><div class="prog-fill" style="width:${(g.monto/maxG*100).toFixed(0)}%;background:${topColors[i]}"></div></div>
       </div>
-      <div class="li-amt d">${fmt(g.monto)}</div>
+      <div class="li-amt r">${fmt(g.monto)}</div>
     </div>`).join(''):'<div class="empty"><i class="ti ti-chart-off" aria-hidden="true"></i><p>Sin gastos este mes</p></div>';
 }
  
@@ -903,6 +994,8 @@ function modalOpen(title,body,footer){
   document.getElementById('modal-body').innerHTML=body;
   document.getElementById('modal-footer').innerHTML=footer;
   document.getElementById('modal-overlay').classList.add('open');
+  // Focus first input after a tick
+  setTimeout(()=>{const f=document.querySelector('.modal-body input,modal-body select');if(f)f.focus();},100);
 }
 function closeModalDirect(){document.getElementById('modal-overlay').classList.remove('open');}
 function closeModal(e){if(e.target===document.getElementById('modal-overlay'))closeModalDirect();}
@@ -1023,6 +1116,7 @@ window.switchSection=function(name){
 };
  
 renderAll();
+ 
 </script>
 </body>
 </html>
