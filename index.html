@@ -146,7 +146,7 @@ body{
 .stat-card.gr::after{background:var(--green);}
 .stat-card.p::after{background:var(--teal);}
 .stat-label{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;padding-left:2px;}
-.stat-val{font-size:18px;font-weight:700;line-height:1.1;padding-left:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.stat-val{font-size:15px;font-weight:700;line-height:1.2;padding-left:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .stat-val.c{color:var(--purple);}
 .stat-val.r{color:var(--red);}
 .stat-val.g{color:var(--gold);}
@@ -173,7 +173,7 @@ body{
   border-radius:var(--rs);padding:.65rem .8rem;text-align:center;
 }
 .glow-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:3px;}
-.glow-val{font-size:13px;font-weight:700;white-space:nowrap;}
+.glow-val{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
 /* ---- CARD ---- */
 .card{
@@ -722,6 +722,7 @@ function pinSubmit(){
   if(pinMode === 'check'){
     if(pinBuffer === stored){
       document.getElementById('pin-screen').classList.add('hidden');
+      renderAll();
     } else {
       document.getElementById('pin-error').textContent = 'PIN incorrecto. Intentá de nuevo.';
       updatePinDots(true);
@@ -743,6 +744,7 @@ function pinSubmit(){
     if(pinBuffer === pinFirst){
       localStorage.setItem(PIN_KEY, pinBuffer);
       document.getElementById('pin-screen').classList.add('hidden');
+      renderAll();
       showToast('PIN guardado correctamente');
     } else {
       document.getElementById('pin-error').textContent = 'Los PINs no coinciden. Intentá de nuevo.';
@@ -907,7 +909,7 @@ function renderAll(){
   renderSpotifyMembers(data);
   renderChartBalance(data);
   if(document.getElementById('section-graficos').classList.contains('active')){
-    renderGraficos(data);
+    setTimeout(()=>renderGraficos(curData()),20);
   }
 }
 
@@ -918,11 +920,11 @@ function renderSummary(data){
   const saldo=cap-t.totalGastos;
   const sobEst=cap-t.totalEst;
   document.getElementById('summary-cards').innerHTML=`
-    <div class="stat-card c"><div class="stat-label">Capital neto</div><div class="stat-val c" data-full="${fmt(cap)}" onclick="showFullAmt(this)">${fmtM(cap)}</div><div class="stat-sub">Salario + sobrante</div></div>
-    <div class="stat-card r"><div class="stat-label">Total gastos</div><div class="stat-val r" data-full="${fmt(t.totalGastos)}" onclick="showFullAmt(this)">${fmtM(t.totalGastos)}</div><div class="stat-sub">Fijos + variables</div></div>
-    <div class="stat-card g"><div class="stat-label">Estimado total</div><div class="stat-val g" data-full="${fmt(t.totalEst)}" onclick="showFullAmt(this)">${fmtM(t.totalEst)}</div><div class="stat-sub">Toca para ver</div></div>
-    <div class="stat-card ${saldo>=0?'gr':'r'}"><div class="stat-label">Saldo real</div><div class="stat-val ${saldo>=0?'gr':'r'}" data-full="${fmt(saldo)}" onclick="showFullAmt(this)">${fmtM(saldo)}</div><div class="stat-sub">${saldo>=0?'Disponible':'Déficit'}</div></div>
-    <div class="stat-card p" style="grid-column:span 2"><div class="stat-label">Sobrante estimado</div><div class="stat-val p" data-full="${fmt(sobEst)}" onclick="showFullAmt(this)">${fmtM(sobEst)}</div><div class="stat-sub">Capital neto − estimado total ${sobEst>=0?'✓':'⚠'}</div></div>
+    <div class="stat-card c"><div class="stat-label">Capital neto</div><div class="stat-val c">${fmt(cap)}</div><div class="stat-sub">Salario + sobrante</div></div>
+    <div class="stat-card r"><div class="stat-label">Total gastos</div><div class="stat-val r">${fmt(t.totalGastos)}</div><div class="stat-sub">Fijos + variables</div></div>
+    <div class="stat-card g"><div class="stat-label">Estimado total</div><div class="stat-val g">${fmt(t.totalEst)}</div><div class="stat-sub">Fijos + variables</div></div>
+    <div class="stat-card ${saldo>=0?'gr':'r'}"><div class="stat-label">Saldo real</div><div class="stat-val ${saldo>=0?'gr':'r'}">${fmt(saldo)}</div><div class="stat-sub">${saldo>=0?'Disponible':'Déficit'}</div></div>
+    <div class="stat-card p" style="grid-column:span 2"><div class="stat-label">Sobrante estimado</div><div class="stat-val p">${fmt(sobEst)}</div><div class="stat-sub">Capital neto − estimado total ${sobEst>=0?'✓':'⚠'}</div></div>
   `;
 }
 
@@ -930,12 +932,12 @@ function renderTotals(data){
   const t=calcTotals(data);
   const cap=getCapitalNeto(data);
   document.getElementById('totals-bar').innerHTML=`
-    <div class="glow-item"><div class="glow-label">Ingresos</div><div class="glow-val" style="color:var(--cyan)">${fmtM((data.salary||0)+t.spIng+t.ingExt)}</div></div>
-    <div class="glow-item"><div class="glow-label">Fijos</div><div class="glow-val" style="color:var(--red)">${fmtM(t.fijos)}</div></div>
-    <div class="glow-item"><div class="glow-label">Variables</div><div class="glow-val" style="color:var(--pink)">${fmtM(t.vars)}</div></div>
-    <div class="glow-item"><div class="glow-label">Estimado</div><div class="glow-val" style="color:var(--gold)">${fmtM(t.totalEst)}</div></div>
-    <div class="glow-item"><div class="glow-label">Spotify</div><div class="glow-val" style="color:var(--purple)">${fmtM(t.spIng)}</div></div>
-    <div class="glow-item"><div class="glow-label">Extra</div><div class="glow-val" style="color:var(--green)">${fmtM(t.ingExt)}</div></div>
+    <div class="glow-item"><div class="glow-label">Ingresos</div><div class="glow-val" style="color:var(--cyan)">${fmt((data.salary||0)+t.spIng+t.ingExt)}</div></div>
+    <div class="glow-item"><div class="glow-label">Fijos</div><div class="glow-val" style="color:var(--red)">${fmt(t.fijos)}</div></div>
+    <div class="glow-item"><div class="glow-label">Variables</div><div class="glow-val" style="color:var(--pink)">${fmt(t.vars)}</div></div>
+    <div class="glow-item"><div class="glow-label">Estimado</div><div class="glow-val" style="color:var(--gold)">${fmt(t.totalEst)}</div></div>
+    <div class="glow-item"><div class="glow-label">Spotify</div><div class="glow-val" style="color:var(--purple)">${fmt(t.spIng)}</div></div>
+    <div class="glow-item"><div class="glow-label">Extra</div><div class="glow-val" style="color:var(--green)">${fmt(t.ingExt)}</div></div>
   `;
 }
 
@@ -1329,6 +1331,9 @@ function renderGraficos(data){
   const dVals=[...data.serviciosFijos.filter(f=>f.monto>0).map(f=>f.monto),...Object.keys(varGroups).filter(k=>varGroups[k].real>0).map(k=>varGroups[k].real)];
   const dTotal=dVals.reduce((s,v)=>s+v,0);
   if(chartDonut){chartDonut.destroy();chartDonut=null;}
+  // If canvas was hidden/removed, restore it
+  const donutCanvas=document.getElementById('chart-donut');
+  if(donutCanvas) donutCanvas.style.display='';
   if(dVals.length>0){
     chartDonut=new Chart(document.getElementById('chart-donut'),{
       type:'doughnut',
@@ -1570,7 +1575,13 @@ pinInit();
 const origSwitch=switchSection;
 window.switchSection=function(name){
   origSwitch(name);
-  if(name==='graficos'){setTimeout(()=>renderGraficos(curData()),50);}
+  if(name==='graficos'){
+    // Small delay to let DOM settle, then render with fresh data
+    setTimeout(()=>{
+      const data=curData();
+      renderGraficos(data);
+    },50);
+  }
 };
 
 renderAll();
